@@ -4,7 +4,9 @@ import com.telusko.SpringEcom.models.Product;
 import com.telusko.SpringEcom.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,8 +27,11 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product saveProduct(Product product) {
-       return productRepository.save(product);
+    public Product saveProduct(Product product, MultipartFile imageFile) throws IOException {
+        product.setImageName(imageFile.getOriginalFilename());
+        product.setImageType(imageFile.getContentType());
+        product.setImage(imageFile.getBytes());
+        return productRepository.save(product);
     }
 
     public Product deleteProduct(Product product) {
