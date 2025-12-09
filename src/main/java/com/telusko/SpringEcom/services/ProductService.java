@@ -27,7 +27,7 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product saveProduct(Product product, MultipartFile imageFile) throws IOException {
+    public Product saveOrUpdateProduct(Product product, MultipartFile imageFile) throws IOException {
         product.setImageName(imageFile.getOriginalFilename());
         product.setImageType(imageFile.getContentType());
         product.setImage(imageFile.getBytes());
@@ -39,13 +39,13 @@ public class ProductService {
         return getProductById(product.getId());
     }
 
-    public Product updateProduct(Product product) {
-        Product productById = getProductById(product.getId());
-        if (productById.getId() > 0L) {
-            return productRepository.save(product);
-        }
-        return productById;
-    }
+//    public Product updateProduct(Product product) {
+//        Product productById = getProductById(product.getId());
+//        if (productById.getId() > 0L) {
+//            return productRepository.save(product);
+//        }
+//        return productById;
+//    }
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(new Product(-1L));
