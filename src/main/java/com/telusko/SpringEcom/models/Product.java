@@ -25,8 +25,9 @@ public class Product {
     private byte[] image;
     private boolean isProductAvailable;
     private Integer stockQuantity;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date releaseDate;
+    private String category;
 
 
     public Product(Long id) {
@@ -123,5 +124,13 @@ public class Product {
 
     public byte[] getImage() {
         return image;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

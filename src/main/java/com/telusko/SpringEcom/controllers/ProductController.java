@@ -16,6 +16,7 @@ import java.util.List;
  * @author Joesta
  */
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("api")
 public class ProductController {
@@ -67,11 +68,11 @@ public class ProductController {
         }
     }
 
-    @PutMapping("product")
-    public ResponseEntity<?> updateProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile) {
+    @PutMapping("product/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestPart Product product, @RequestPart MultipartFile imageFile) {
         Product updateProduct;
         try {
-            updateProduct = productService.getProductById(product.getId());
+            updateProduct = productService.getProductById(id);
             if (updateProduct.getId() > 0L) {
                 updateProduct = productService.saveOrUpdateProduct(product, imageFile);
                 return new ResponseEntity<>(updateProduct, HttpStatus.OK);
@@ -116,7 +117,7 @@ public class ProductController {
     }
 
     // search version 2
-    @GetMapping("products/keyword")
+    @GetMapping("products/search")
     public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
         List<Product> products = productService.searchProducts(keyword);
         if (!products.isEmpty())
