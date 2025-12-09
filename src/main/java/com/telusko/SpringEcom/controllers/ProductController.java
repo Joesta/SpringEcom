@@ -47,6 +47,15 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("product/{productId}/image")
+    public ResponseEntity<byte[]> getImageByProductId(@PathVariable Long productId) {
+        Product product = productService.getProductById(productId);
+        if (product.getId() > 0L) {
+            return new ResponseEntity<>(product.getImage(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @PostMapping("product")
     public ResponseEntity<?> saveProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile) {
         Product savedProduct = null;
