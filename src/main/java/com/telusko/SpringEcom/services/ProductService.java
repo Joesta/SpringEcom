@@ -39,13 +39,13 @@ public class ProductService {
         return getProductById(product.getId());
     }
 
-//    public Product updateProduct(Product product) {
-//        Product productById = getProductById(product.getId());
-//        if (productById.getId() > 0L) {
-//            return productRepository.save(product);
-//        }
-//        return productById;
-//    }
+    public Product save(Product product) {
+        Product productById = getProductById(product.getId());
+        if (productById.getId() > 0L) {
+            return productRepository.save(product);
+        }
+        return productById;
+    }
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(new Product(-1L));
@@ -63,5 +63,9 @@ public class ProductService {
 
     public List<Product> searchProducts(String keyword) {
         return productRepository.searchProducts(keyword);
+    }
+
+    public List<Product> getAllProductsByIds(List<Long> ids) {
+        return productRepository.findAllById(ids);
     }
 }

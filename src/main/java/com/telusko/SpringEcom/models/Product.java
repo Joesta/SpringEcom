@@ -29,7 +29,6 @@ public class Product {
     private Date releaseDate;
     private String category;
 
-
     public Product(Long id) {
         this.id = id;
     }
