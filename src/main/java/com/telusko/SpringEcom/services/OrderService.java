@@ -8,9 +8,9 @@ import com.telusko.SpringEcom.models.dto.OrderItemResponse;
 import com.telusko.SpringEcom.models.dto.OrderRequest;
 import com.telusko.SpringEcom.models.dto.OrderResponse;
 import com.telusko.SpringEcom.repositories.OrderRepository;
+import com.telusko.SpringEcom.repositories.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ import java.util.UUID;
 @Service
 public class OrderService {
 
-    private ProductService productService;
+    private ProductRepository productRepository;
 
     private OrderRepository orderRepository;
 
@@ -37,12 +37,12 @@ public class OrderService {
     }
 
     @Autowired
-    public void setProductService(ProductService productService) {
-        this.productService = productService;
+    public void setProductRepository(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     public List<OrderResponse> getAllOrderResponses() {
-        List<Order> orders = orderRepository.findAll(Sort.by("orderDate"));
+        List<Order> orders = orderRepository.findAll();
         List<OrderItemResponse> orderItemResponses = new ArrayList<>();
         List<OrderResponse> orderResponse = new ArrayList<>();
         for (Order order : orders) {
@@ -76,20 +76,28 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (OrderItemRequest reqItem : items) {
-            Product product = productService.getProductById(reqItem.productId());
-            if (product.getId() > 0) {
-                if (product.isProductAvailable() && product.getStockQuantity() > 0) {
-                    product.setStockQuantity(product.getStockQuantity() - reqItem.quantity());
-                    productService.save(product);
+            Product product = productRepository.findById(reqItem.productId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
 
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrder(order);
-                    orderItem.setProduct(product);
-                    orderItem.setQuantity(reqItem.quantity());
-                    orderItem.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(reqItem.quantity())));
-                    orderItems.add(orderItem);
-                }
-                else throw new RuntimeException("Product is not available");
+            if (product.isProductAvailable() && product.getStockQuantity() > 0) {
+                product.setStockQuantity(product.getStockQuantity() - reqItem.quantity());
+                productRepository.save(product);
+
+                OrderItem orderItem = OrderItem.builder()
+                        .order(order)
+                        .product(product)
+                        .quantity(reqItem.quantity())
+                        .totalPrice(product.getPrice().multiply(BigDecimal.valueOf(reqItem.quantity())))
+                        .build();
+
+                orderItems.add(orderItem);
+
+//                orderItem.setOrder(order);
+//                orderItem.setProduct(product);
+//                orderItem.setQuantity(reqItem.quantity());
+//                orderItem.setTotalPrice();
+//                orderItems.add(orderItem);
+
             }
         }
 
@@ -102,7 +110,7 @@ public class OrderService {
                 OrderItemResponse orderItemResponse = new OrderItemResponse(orderItem.getProduct().getName(), orderItem.getQuantity(), orderItem.getTotalPrice());
                 orderItemResponses.add(orderItemResponse);
             }
-            return new OrderResponse(order.getOrderId(), order.getCustomerName(), order.getEmail(), order.getStatus(), savedOrder.getOrderDate() , orderItemResponses);
+            return new OrderResponse(order.getOrderId(), order.getCustomerName(), order.getEmail(), order.getStatus(), savedOrder.getOrderDate(), orderItemResponses);
         }
 
         return null;
