@@ -43,11 +43,12 @@ public class OrderService {
 
     public List<OrderResponse> getAllOrderResponses() {
         List<Order> orders = orderRepository.findAll();
-        List<OrderItemResponse> orderItemResponses = new ArrayList<>();
         List<OrderResponse> orderResponse = new ArrayList<>();
+
         for (Order order : orders) {
-            List<OrderItem> oderItems = order.getItems();
-            for (OrderItem orderItem : oderItems) {
+            List<OrderItemResponse> orderItemResponses = new ArrayList<>();
+
+            for (OrderItem orderItem : order.getItems()) {
                 OrderItemResponse orderItemResponse = new OrderItemResponse(orderItem.getProduct().getName(), orderItem.getQuantity(), orderItem.getTotalPrice());
                 orderItemResponses.add(orderItemResponse);
             }
