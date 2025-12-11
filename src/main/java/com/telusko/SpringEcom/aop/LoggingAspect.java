@@ -18,12 +18,12 @@ public class LoggingAspect {
     public static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
     // 1. returnType, 2 fully-qualified class-name, 3. class-name.method.name, 4 - parameters
-    @After("execution(* com.telusko.SpringEcom.services.OrderService.placeOrder())")
+    @After("execution(* com.telusko.SpringEcom.services.OrderService.placeOrder(..))")
     public void logOrderTransaction(JoinPoint joinPoint) {
         LOGGER.info("Begin -  Ordering Transaction :: {}", joinPoint.getSignature().getName());
     }
 
-    @After("execution(* com.telusko.SpringEcom.services.OrderService.getAllOrderResponses())")
+    @After("execution(* com.telusko.SpringEcom.services.OrderService.getAllOrderResponses(..))")
     public void logAfterFetchingAllOrderResponses(JoinPoint joinPoint) {
         LOGGER.info("Begin -  Fetching all order responses :: {}", joinPoint.getSignature().getName());
     }
