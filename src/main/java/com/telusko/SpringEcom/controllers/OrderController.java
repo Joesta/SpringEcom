@@ -35,11 +35,10 @@ public class OrderController {
     @GetMapping("orders")
     public ResponseEntity<List<OrderResponse>> getAllOrder() {
         List<OrderResponse> orderResponses = orderService.getAllOrderResponses();
-        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
-//        if (!orderResponses.isEmpty())
-//            return new ResponseEntity<>(orderResponses, HttpStatus.OK);
-//        else
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (!orderResponses.isEmpty())
+            return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

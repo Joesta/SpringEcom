@@ -10,6 +10,8 @@ import com.telusko.SpringEcom.models.dto.OrderResponse;
 import com.telusko.SpringEcom.repositories.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -40,7 +42,19 @@ public class OrderService {
     }
 
     public List<OrderResponse> getAllOrderResponses() {
-        return null;
+        List<Order> orders = orderRepository.findAll(Sort.by("orderDate"));
+        List<OrderItemResponse> orderItemResponses = new ArrayList<>();
+        List<OrderResponse> orderResponse = new ArrayList<>();
+        for (Order order : orders) {
+            List<OrderItem> oderItems = order.getItems();
+            for (OrderItem orderItem : oderItems) {
+                OrderItemResponse orderItemResponse = new OrderItemResponse(orderItem.getProduct().getName(), orderItem.getQuantity(), orderItem.getTotalPrice());
+                orderItemResponses.add(orderItemResponse);
+            }
+
+            orderResponse.add(new OrderResponse(order.getOrderId(), order.getCustomerName(), order.getEmail(), order.getStatus(), order.getOrderDate(), orderItemResponses));
+        }
+        return orderResponse;
     }
 
     private String generateUniqueOrderId() {
