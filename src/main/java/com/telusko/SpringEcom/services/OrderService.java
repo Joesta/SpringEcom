@@ -11,7 +11,6 @@ import com.telusko.SpringEcom.repositories.OrderRepository;
 import com.telusko.SpringEcom.repositories.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -80,26 +79,24 @@ public class OrderService {
             Product product = productRepository.findById(reqItem.productId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            if (product.isProductAvailable() && product.getStockQuantity() > 0 && product.getStockQuantity() >= reqItem.quantity()) {
-                product.setStockQuantity(product.getStockQuantity() - reqItem.quantity());
-                productRepository.save(product);
-
-                OrderItem orderItem = OrderItem.builder()
-                        .order(order)
-                        .product(product)
-                        .quantity(reqItem.quantity())
-                        .totalPrice(product.getPrice().multiply(BigDecimal.valueOf(reqItem.quantity())))
-                        .build();
-
-                orderItems.add(orderItem);
-
-//                orderItem.setOrder(order);
-//                orderItem.setProduct(product);
-//                orderItem.setQuantity(reqItem.quantity());
-//                orderItem.setTotalPrice();
-//                orderItems.add(orderItem);
-
+            if (product.getStockQuantity() < reqItem.quantity()) {
+                throw new IllegalStateException(
+                        "Not enough stock for product: " + product.getName()
+                );
             }
+
+            product.setStockQuantity(product.getStockQuantity() - reqItem.quantity());
+            productRepository.save(product);
+
+            OrderItem orderItem = OrderItem.builder()
+                    .order(order)
+                    .product(product)
+                    .quantity(reqItem.quantity())
+                    .totalPrice(product.getPrice().multiply(BigDecimal.valueOf(reqItem.quantity())))
+                    .build();
+
+            orderItems.add(orderItem);
+
         }
 
         if (!orderItems.isEmpty()) {
