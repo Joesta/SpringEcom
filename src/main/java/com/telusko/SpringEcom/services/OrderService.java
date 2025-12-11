@@ -79,7 +79,7 @@ public class OrderService {
             Product product = productRepository.findById(reqItem.productId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            if (product.isProductAvailable() && product.getStockQuantity() > 0) {
+            if (product.isProductAvailable() && product.getStockQuantity() > 0 && product.getStockQuantity() >= reqItem.quantity()) {
                 product.setStockQuantity(product.getStockQuantity() - reqItem.quantity());
                 productRepository.save(product);
 
