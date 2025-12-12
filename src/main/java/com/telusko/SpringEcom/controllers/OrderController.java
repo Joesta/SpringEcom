@@ -3,9 +3,11 @@ package com.telusko.SpringEcom.controllers;
 import com.telusko.SpringEcom.models.dto.OrderRequest;
 import com.telusko.SpringEcom.models.dto.OrderResponse;
 import com.telusko.SpringEcom.services.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +41,12 @@ public class OrderController {
             return new ResponseEntity<>(orderResponses, HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // @Todo: remove this. Only for testing purpose and learning.
+    @GetMapping("csrf-token")
+    public CsrfToken getCsrfToken(HttpServletRequest request) {
+        return (CsrfToken) request.getAttribute("_csrf");
     }
 
 }
