@@ -1,6 +1,7 @@
 package com.telusko.SpringEcom.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.http.converter.autoconfigure.ClientHttpMessageConvertersCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,7 +45,6 @@ public class SecurityConfig {
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
-                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
