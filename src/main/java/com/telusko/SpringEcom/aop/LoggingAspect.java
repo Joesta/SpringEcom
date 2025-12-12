@@ -23,7 +23,7 @@ public class LoggingAspect {
         LOGGER.info("Begin -  Ordering Transaction :: {}", joinPoint.getSignature().getName());
     }
 
-    @After("execution(* com.telusko.SpringEcom.services.OrderService.getAllOrderResponses(..))")
+    @Before("execution(* com.telusko.SpringEcom.services.OrderService.getAllOrderResponses(..))")
     public void logAfterFetchingAllOrderResponses(JoinPoint joinPoint) {
         LOGGER.info("Begin -  Fetching all order responses :: {}", joinPoint.getSignature().getName());
     }
