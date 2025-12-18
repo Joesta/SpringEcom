@@ -1,5 +1,6 @@
 package com.telusko.SpringEcom.services.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -7,12 +8,15 @@ import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.function.Function;
 
 /**
  * @author Joesta
@@ -44,6 +48,36 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs)) // 8 hrs
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String getUsername(String token) {
+       return extractClaim(token, Claims::getSubject);
+    }
+
+    private Date getExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String userName = getUsername(token);
+        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    private boolean isTokenExpired(String token) {
+        return getExpiration(token).before(new Date());
     }
 
 }
