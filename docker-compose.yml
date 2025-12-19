@@ -19,7 +19,12 @@ services:
       - "5432:5432"
     networks:
       - ecom-network
+    volumes:
+      - ecom-data-storage:/var/lib/postgresql
 
 networks:
   ecom-network:
     driver: bridge
+
+volumes:
+  ecom-data-storage:
