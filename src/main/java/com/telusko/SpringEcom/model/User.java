@@ -1,8 +1,7 @@
 package com.telusko.SpringEcom.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.telusko.SpringEcom.enums.Role;
+import jakarta.persistence.*;
 import lombok.Data;
 
 /**
@@ -17,4 +16,6 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
