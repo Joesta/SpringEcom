@@ -16,7 +16,7 @@ import java.util.List;
  * @author Joesta
  */
 
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("api")
 public class OrderController {
@@ -30,17 +30,12 @@ public class OrderController {
 
     @PostMapping("orders/place")
     public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orderRequest) {
-        OrderResponse orderResponse = orderService.placeOrder(orderRequest);
-        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(orderService.placeOrder(orderRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("orders")
     public ResponseEntity<List<OrderResponse>> getAllOrder() {
-        List<OrderResponse> orderResponses = orderService.getAllOrderResponses();
-        if (!orderResponses.isEmpty())
-            return new ResponseEntity<>(orderResponses, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(orderService.getAllOrderResponses(), HttpStatus.OK);
     }
 
     // @Todo: remove this. Only for testing purpose and learning.
@@ -48,5 +43,4 @@ public class OrderController {
     public CsrfToken getCsrfToken(HttpServletRequest request) {
         return (CsrfToken) request.getAttribute("_csrf");
     }
-
 }

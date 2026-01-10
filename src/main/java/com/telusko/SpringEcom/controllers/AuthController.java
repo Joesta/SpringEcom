@@ -1,12 +1,11 @@
 package com.telusko.SpringEcom.controllers;
 
-import com.telusko.SpringEcom.model.User;
-import com.telusko.SpringEcom.services.jwt.JwtService;
+
+import com.telusko.SpringEcom.models.dto.LoginRequest;
+import com.telusko.SpringEcom.models.dto.LoginResponse;
+import com.telusko.SpringEcom.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -17,28 +16,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/auth")
 public class AuthController {
 
-    private AuthenticationManager authenticationManager;
-    private JwtService jwtService;
+    private AuthService authService;
 
     @Autowired
-    public void setJwtService(JwtService jwtService) {
-        this.jwtService = jwtService;
+    public void setAuthService(AuthService authService) {
+        this.authService = authService;
     }
-
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-
 
     @PostMapping("login")
-    public String login(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if (authentication.isAuthenticated())
-            return jwtService.generateToken(user.getUsername());
-//            return "success";
-        else
-            return "failed to login";
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
+        return ResponseEntity.ok(authService.login(req));
     }
 }
