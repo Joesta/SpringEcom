@@ -42,7 +42,7 @@ public class ProductController {
     }
 
     @PostMapping("product")
-    public ResponseEntity<?> saveProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile) {
+    public ResponseEntity<?> saveProduct(@RequestPart("product") Product product, @RequestPart("imageFile") MultipartFile imageFile) {
         return new ResponseEntity<>(productService.saveOrUpdateProduct(product, imageFile), HttpStatus.CREATED);
     }
 
